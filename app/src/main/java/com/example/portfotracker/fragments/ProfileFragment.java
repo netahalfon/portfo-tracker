@@ -1,5 +1,6 @@
 package com.example.portfotracker.fragments;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,9 +8,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.portfotracker.R;
-import com.example.portfotracker.databinding.FragmentHomeBinding;
 import com.example.portfotracker.databinding.FragmentProfileBinding;
 
 /**
@@ -38,6 +41,14 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
 
+        binding.btnDeposit.setOnClickListener(v -> showDepositWithdrawDialog(true));
+        binding.btnWithdraw.setOnClickListener(v -> showDepositWithdrawDialog(false));
+
+        setUsername();
+        setBalance();
+        setTotalPaid();
+        setCurrentValue();
+
         return binding.getRoot();
     }
 
@@ -45,6 +56,108 @@ public class ProfileFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void showDepositWithdrawDialog(boolean isDeposit) {
+        //Create a dialog-optimized view
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View dialogView = inflater.inflate(R.layout.dialog_deposit_withdraw, null);
+
+        //Finding components in the dialog view
+        TextView tvCurrentBalance = dialogView.findViewById(R.id.tv_current_balance);
+        EditText etAmount = dialogView.findViewById(R.id.et_amount);
+        TextView tvNewBalance = dialogView.findViewById(R.id.tv_new_balance);
+        TextView tvError = dialogView.findViewById(R.id.tv_error);
+
+        //View current balance
+        String balanceStr = binding.tvBalance.getText().toString().replace("$", "");
+        double currentBalance = Double.parseDouble(balanceStr);
+        tvCurrentBalance.setText("Current balance: $" + String.format("%.2f", currentBalance));
+
+
+
+
+        //Building the dialog
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setTitle(isDeposit ? "Deposit" : "Withdraw")
+                .setView(dialogView)
+                .setPositiveButton("Submit", (dialogInterface, which) -> {
+                    String entered = etAmount.getText().toString();
+                    double amount = 0;
+                    try { amount = Double.parseDouble(entered); } catch (Exception ignore) {}
+
+                    double newBalance = isDeposit ? currentBalance + amount : currentBalance - amount;
+                    binding.tvBalance.setText("$" + String.format("%.2f", newBalance));
+                    // TODO: שמור ב־Firebase
+                })
+                .setNegativeButton("Cancel", null)
+                .create();
+
+        // Showing the dialog
+        dialog.show();
+        final Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+
+        // Calculating and updating the future balance while writing
+        etAmount.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                double amount = 0;
+                boolean valid = false;
+                tvError.setText(" ");
+
+                try {
+                    amount = Double.parseDouble(s.toString());
+                    double newBalance = isDeposit ? currentBalance + amount : currentBalance - amount;
+
+                    if (newBalance<0) {
+                        tvError.setText("Cannot withdraw more than your balance");
+                        tvError.setVisibility(View.VISIBLE);
+                    } else if (amount == 0) {
+                        tvError.setText("Add a valid amount");
+                        tvError.setVisibility(View.VISIBLE);
+                    }else{
+                        valid = true;
+                    }
+                    tvNewBalance.setText("New balance: $" + String.format("%.2f", newBalance));
+                } catch (Exception ignore) {}
+                if (positiveButton != null) {
+                    positiveButton.setEnabled(valid);
+                }
+            }
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void afterTextChanged(android.text.Editable s) {}
+        });
+
+
+        positiveButton.setEnabled(false); // כפתור Submit מושבת בהתחלה
+
+    }
+    private void setUsername() {
+        // TODO: Load username from Firebase in the future
+        if (binding != null) {
+            binding.tvUsername.setText("Neta Halfon");
+        }
+    }
+
+    private void setBalance() {
+        // TODO: Load balance from Firebase in the future
+        if (binding != null) {
+            binding.tvBalance.setText("$150.00");
+        }
+    }
+
+    private void setTotalPaid() {
+        // TODO: Calculate and load total paid for stocks from Firebase in the future
+        if (binding != null) {
+            binding.tvTotalPaid.setText("$900.00");
+        }
+    }
+
+    private void setCurrentValue() {
+        // TODO: Calculate and load current stocks value from Firebase in the future
+        if (binding != null) {
+            binding.tvCurrentValue.setText("$1020.00");
+        }
     }
 
 }
