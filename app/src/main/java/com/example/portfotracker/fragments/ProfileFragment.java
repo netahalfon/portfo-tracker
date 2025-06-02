@@ -3,6 +3,7 @@ package com.example.portfotracker.fragments;
 import android.app.AlertDialog;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -11,25 +12,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.portfotracker.R;
 import com.example.portfotracker.databinding.FragmentProfileBinding;
+import com.example.portfotracker.models.User;
+import com.example.portfotracker.services.FireBaseSdkService;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ProfileFragment extends Fragment {
 
     private FragmentProfileBinding binding;
 
     public ProfileFragment() {}
 
-    public static ProfileFragment newInstance() {
-        ProfileFragment fragment = new ProfileFragment();
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,8 +42,7 @@ public class ProfileFragment extends Fragment {
         binding.btnDeposit.setOnClickListener(v -> showDepositWithdrawDialog(true));
         binding.btnWithdraw.setOnClickListener(v -> showDepositWithdrawDialog(false));
 
-        setUsername();
-        setBalance();
+        observeUserData();
         setTotalPaid();
         setCurrentValue();
 
@@ -87,8 +84,7 @@ public class ProfileFragment extends Fragment {
                     try { amount = Double.parseDouble(entered); } catch (Exception ignore) {}
 
                     double newBalance = isDeposit ? currentBalance + amount : currentBalance - amount;
-                    binding.tvBalance.setText("$" + String.format("%.2f", newBalance));
-                    // TODO: שמור ב־Firebase
+                    FireBaseSdkService.setUserAccountBalance(newBalance);
                 })
                 .setNegativeButton("Cancel", null)
                 .create();
@@ -132,19 +128,7 @@ public class ProfileFragment extends Fragment {
         positiveButton.setEnabled(false); // כפתור Submit מושבת בהתחלה
 
     }
-    private void setUsername() {
-        // TODO: Load username from Firebase in the future
-        if (binding != null) {
-            binding.tvUsername.setText("Neta Halfon");
-        }
-    }
 
-    private void setBalance() {
-        // TODO: Load balance from Firebase in the future
-        if (binding != null) {
-            binding.tvBalance.setText("$150.00");
-        }
-    }
 
     private void setTotalPaid() {
         // TODO: Calculate and load total paid for stocks from Firebase in the future
@@ -160,4 +144,20 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    private void observeUserData(){
+        FireBaseSdkService.observeUserData(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                if(user == null) return;
+                binding.tvBalance.setText(String.format("$%.2f", user.getAccountBalance()));
+                binding.tvUsername.setText(user.getName());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getContext(),error.getMessage(),Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 }
