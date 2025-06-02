@@ -1,5 +1,6 @@
 package com.example.portfotracker.fragments;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,10 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.data.Entry;
+
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +56,12 @@ public class ChartFragment extends Fragment {
             stock = YahooFinanceService.getStockData(stockSymbol);
             getActivity().runOnUiThread(this::initViews);
         }).start();
+
+        binding.btnBuy.setOnClickListener(v -> showBuySellDialog(true));
+        binding.btnSell.setOnClickListener(v -> showBuySellDialog(false));
+
+        setQuantity();
+
         return binding.getRoot();
     }
 
@@ -157,4 +168,87 @@ public class ChartFragment extends Fragment {
         float minutesAfterStart = index;
         return baseHour + (minutesAfterStart / 60f);
     }
+
+    private void showBuySellDialog(boolean isBuy) {
+        //Create a dialog-optimized view
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View dialogView = inflater.inflate(R.layout.dialog_buy_sell, null);
+
+        //Finding components in the dialog view
+        TextView tvCurrentQuantity = dialogView.findViewById(R.id.tv_current_quantity);
+        EditText etAmount = dialogView.findViewById(R.id.et_amount);
+        TextView tvNewQuantity = dialogView.findViewById(R.id.tv_new_quantity);
+        TextView tvError = dialogView.findViewById(R.id.tv_error);
+
+        //View current quantity
+        String quantityStr = binding.tvQuantity.getText().toString().replace("$", "");
+        int currentQuantity = Integer.parseInt(quantityStr);
+        tvCurrentQuantity.setText("Current quantity: " + currentQuantity);
+
+
+
+
+        //Building the dialog
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setTitle(isBuy ? "Buy" : "Sell")
+                .setView(dialogView)
+                .setPositiveButton("Submit", (dialogInterface, which) -> {
+                    String entered = etAmount.getText().toString();
+                    int amount = 0;
+                    try { amount = Integer.parseInt(entered); } catch (Exception ignore) {}
+
+                    int newQuantity = isBuy ? currentQuantity + amount : currentQuantity - amount;
+                    binding.tvQuantity.setText( String.valueOf(newQuantity));
+                    // TODO: שמור ב־Firebase
+                })
+                .setNegativeButton("Cancel", null)
+                .create();
+
+        // Showing the dialog
+        dialog.show();
+        final Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+
+        // Calculating and updating the future quantity while writing
+        etAmount.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int amount = 0;
+                boolean valid = false;
+                tvError.setText(" ");
+
+                try {
+                    amount = Integer.parseInt(s.toString());
+                    int newQuantity = isBuy ? currentQuantity + amount : currentQuantity - amount;
+
+                    if (newQuantity<0) {
+                        tvError.setText("Cannot sell more than your quantity");
+                        tvError.setVisibility(View.VISIBLE);
+                    } else if (amount == 0) {
+                        tvError.setText("Add a valid amount");
+                        tvError.setVisibility(View.VISIBLE);
+                    }else{
+                        valid = true;
+                    }
+                    tvNewQuantity.setText("New quantity: " + newQuantity);
+                } catch (Exception ignore) {}
+                if (positiveButton != null) {
+                    positiveButton.setEnabled(valid);
+                }
+            }
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void afterTextChanged(android.text.Editable s) {}
+        });
+
+
+        positiveButton.setEnabled(false); // כפתור Submit מושבת בהתחלה
+
+    }
+
+    private void setQuantity() {
+        // TODO: Calculate and load stocks quantity from Firebase in the future
+        if (binding != null) {
+            binding.tvQuantity.setText("5");
+        }
+    }
+
 }
