@@ -16,9 +16,8 @@ import android.widget.Toast;
 
 import com.example.portfotracker.R;
 import com.example.portfotracker.activities.HomeActivity;
-import com.example.portfotracker.activities.MainActivity;
 import com.example.portfotracker.databinding.FragmentLoginBinding;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.portfotracker.services.FireBaseSdkService;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,10 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
  */
 public class LoginFragment extends Fragment {
 
-    private FirebaseAuth mAuth;
-
     private FragmentLoginBinding binding;
-
 
     public LoginFragment() {}
 
@@ -47,7 +43,6 @@ public class LoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentLoginBinding.inflate(inflater, container, false);
-        mAuth = FirebaseAuth.getInstance();
 
         binding.registerLink.setOnClickListener(v-> Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_registerFragment));
 
@@ -60,21 +55,22 @@ public class LoginFragment extends Fragment {
     private void handleLogin() {
         String email = binding.emailInput.getText().toString();
         String password = binding.passwordInput.getText().toString();
+
         if(email == null || password == null || email.isEmpty() || password.isEmpty()){
             Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
             return;
         }
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                hideKeyboardFrom(binding.getRoot());
-                Toast.makeText(getContext(), "Login Successful", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(requireActivity(), HomeActivity.class);
-                startActivity(intent);
-            } else {
-                Toast.makeText(getContext(), "Login Failed", Toast.LENGTH_SHORT).show();
-            }
-        });
 
+        FireBaseSdkService.login(email, password).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    hideKeyboardFrom(binding.getRoot());
+                    Toast.makeText(getContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(requireActivity(), HomeActivity.class);
+                    startActivity(intent);
+                }else {
+                    Toast.makeText(getContext(), "Login Failed", Toast.LENGTH_SHORT).show();
+                }
+            });
     }
     public static void hideKeyboardFrom( View view) {
         InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(INPUT_METHOD_SERVICE);

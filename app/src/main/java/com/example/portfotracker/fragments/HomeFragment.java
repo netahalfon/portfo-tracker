@@ -3,6 +3,8 @@ package com.example.portfotracker.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.example.portfotracker.R;
 import com.example.portfotracker.adapters.StockAdapter;
 import com.example.portfotracker.databinding.FragmentHomeBinding;
 import com.example.portfotracker.models.Stock;
@@ -48,7 +51,12 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         binding.stocksRecycler.setItemAnimator(new DefaultItemAnimator());
         binding.stocksRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-        stockAdapter = new StockAdapter(stockArrayList);
+        stockAdapter = new StockAdapter(stockArrayList, stock -> {
+            Bundle bundle = new Bundle();
+            bundle.putString(ChartFragment.STOCK_SYMBOL, stock.getSymbol());
+            NavController navController = NavHostFragment.findNavController(this);
+            navController.navigate(R.id.action_homeFragment_to_chartFragment, bundle);
+        });
         binding.stocksRecycler.setAdapter(stockAdapter);
 
         binding.searchEditText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
