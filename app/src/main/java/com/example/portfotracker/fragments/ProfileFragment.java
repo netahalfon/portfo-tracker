@@ -5,6 +5,10 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,16 +19,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.portfotracker.R;
+import com.example.portfotracker.adapters.StockAdapter;
 import com.example.portfotracker.databinding.FragmentProfileBinding;
+import com.example.portfotracker.models.Stock;
 import com.example.portfotracker.models.User;
 import com.example.portfotracker.services.FireBaseSdkService;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-public class ProfileFragment extends Fragment {
+import java.util.ArrayList;
 
+public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
+    private StockAdapter stockAdapter;
+    private ArrayList<Stock> stockArrayList = new ArrayList<>();
+
 
     public ProfileFragment() {}
 
@@ -38,6 +48,15 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
+        binding.stocksRecycler.setItemAnimator(new DefaultItemAnimator());
+        binding.stocksRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        stockAdapter = new StockAdapter(getContext(),stockArrayList, stock -> {
+            Bundle bundle = new Bundle();
+            bundle.putString(ChartFragment.STOCK_SYMBOL, stock.getSymbol());
+            NavController navController = NavHostFragment.findNavController(this);
+            navController.navigate(R.id.action_homeFragment_to_chartFragment, bundle);
+        });
+        binding.stocksRecycler.setAdapter(stockAdapter);
 
         binding.btnDeposit.setOnClickListener(v -> showDepositWithdrawDialog(true));
         binding.btnWithdraw.setOnClickListener(v -> showDepositWithdrawDialog(false));
@@ -45,6 +64,9 @@ public class ProfileFragment extends Fragment {
         observeUserData();
         setTotalPaid();
         setCurrentValue();
+        //TODO: Load stocks from Firebase and combine them with the data from Yahoo Finance
+        //TODO: insert the combination into stockArrayList
+        stockAdapter.updateStockList(stockArrayList);
 
         return binding.getRoot();
     }
