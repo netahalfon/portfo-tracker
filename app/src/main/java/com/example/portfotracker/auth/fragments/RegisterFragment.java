@@ -16,6 +16,7 @@ import com.example.portfotracker.activities.HomeActivity;
 import com.example.portfotracker.activities.MainActivity;
 import com.example.portfotracker.databinding.FragmentLoginBinding;
 import com.example.portfotracker.databinding.FragmentRegisterBinding;
+import com.example.portfotracker.services.FireBaseSdkService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -23,8 +24,6 @@ import com.google.firebase.auth.FirebaseUser;
 public class RegisterFragment extends Fragment {
 
     private FragmentRegisterBinding binding;
-    private FirebaseAuth mAuth;
-
     public RegisterFragment() {}
 
 
@@ -41,7 +40,6 @@ public class RegisterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentRegisterBinding.inflate(inflater, container, false);
-        mAuth = FirebaseAuth.getInstance();
         binding.registerButton.setOnClickListener(v -> handleRegister());
         binding.loginLink.setOnClickListener(v-> Navigation.findNavController(v).navigate(R.id.action_registerFragment_to_loginFragment));
 
@@ -61,18 +59,15 @@ public class RegisterFragment extends Fragment {
             Toast.makeText(getContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
             return;
         }
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task ->  {
-                    if (task.isSuccessful()) {
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        Toast.makeText(getContext(), "Register Successful", Toast.LENGTH_SHORT).show();
-
-                        Intent intent = new Intent(getContext(), HomeActivity.class);
-                        startActivity(intent);
-                    }else{
-                        Toast.makeText(getContext(), "Registration Failed", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        FireBaseSdkService.register(name,email,password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(getContext(), "Register Successful", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), HomeActivity.class);
+                startActivity(intent);
+            }else{
+                Toast.makeText(getContext(), "Registration Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

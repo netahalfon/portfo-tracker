@@ -2,7 +2,6 @@ package com.example.portfotracker.adapters;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -16,9 +15,10 @@ import java.util.ArrayList;
 public class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder>{
 
     private ArrayList<Stock> stockArrayList;
-
-    public StockAdapter(ArrayList<Stock> stock_ArrayList) {
-        stockArrayList = stock_ArrayList;
+    private OnItemClickListener onItemClickListener;
+    public StockAdapter(ArrayList<Stock> stockArrayList, OnItemClickListener onItemClickListener) {
+        this.stockArrayList = stockArrayList;
+        this.onItemClickListener = onItemClickListener;
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -42,6 +42,11 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHol
         holder.binding.stockName.setText(currentStock.getName());
         holder.binding.stockPrice.setText(String.valueOf(currentStock.getCurrentPrice()));
         holder.binding.stockChange.setText(String.format("%.2f%%", currentStock.getPriceChangePercentage()));
+        holder.binding.itemView.setOnClickListener(v->{
+            if(onItemClickListener != null){
+                onItemClickListener.onItemClick(currentStock);
+            }
+        });
     }
 
     @Override
@@ -57,6 +62,8 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHol
             super(binding.getRoot());
             this.binding = binding;
         }
-
+    }
+    public interface OnItemClickListener {
+        void onItemClick(Stock stock);
     }
 }

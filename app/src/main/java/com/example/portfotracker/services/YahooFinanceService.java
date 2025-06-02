@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 public class YahooFinanceService {
 
@@ -97,7 +96,7 @@ public class YahooFinanceService {
         ArrayList<Future<Stock>> futures = new ArrayList<>();
 
         for (String symbol : TOP_50_SP500_STOCKS) {
-            futures.add(executor.submit(() -> fetchStockData(symbol)));
+            futures.add(executor.submit(() -> getStockData(symbol)));
         }
 
         ArrayList<Stock> stockList = new ArrayList<>();
@@ -116,7 +115,7 @@ public class YahooFinanceService {
         executor.shutdown();
         return stockList;
     }
-    private static Stock fetchStockData(String symbol){
+    public static Stock getStockData(String symbol){
         try {
             URL url = new URL(BASE_URL + "/" + symbol);
             HttpURLConnection request = (HttpURLConnection) url.openConnection();
