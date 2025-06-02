@@ -54,6 +54,7 @@ public class User {
     }
 
     public int getTotalQuantityForStock(String stockSymbol) {
+        if(transactions == null) return  0;
         List<Transaction> transactionsForStock = transactions.get(stockSymbol);
         if (transactionsForStock == null) {
             return 0;

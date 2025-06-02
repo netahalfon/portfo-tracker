@@ -25,6 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 public class ProfileFragment extends Fragment {
 
     private FragmentProfileBinding binding;
+    private  ValueEventListener valueEventListener;
 
     public ProfileFragment() {}
 
@@ -52,6 +53,9 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if(valueEventListener != null){
+            FireBaseSdkService.stopObserveUserData(valueEventListener);
+        }
         binding = null;
     }
 
@@ -145,7 +149,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void observeUserData(){
-        FireBaseSdkService.observeUserData(new ValueEventListener() {
+        valueEventListener = FireBaseSdkService.observeUserData(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);

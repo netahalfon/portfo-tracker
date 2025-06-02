@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import com.example.portfotracker.R;
 import com.example.portfotracker.databinding.FragmentChartBinding;
 import com.example.portfotracker.models.Stock;
+import com.example.portfotracker.models.User;
+import com.example.portfotracker.services.FireBaseSdkService;
 import com.example.portfotracker.services.YahooFinanceService;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -20,10 +22,15 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.data.Entry;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +39,8 @@ import java.util.List;
 public class ChartFragment extends Fragment {
 
     public static final String STOCK_SYMBOL = "STOCK_SYMBOL";
+
+    private  ValueEventListener valueEventListener;
 
     private FragmentChartBinding binding;
 
@@ -60,8 +69,6 @@ public class ChartFragment extends Fragment {
         binding.btnBuy.setOnClickListener(v -> showBuySellDialog(true));
         binding.btnSell.setOnClickListener(v -> showBuySellDialog(false));
 
-        setQuantity();
-
         return binding.getRoot();
     }
 
@@ -73,6 +80,8 @@ public class ChartFragment extends Fragment {
 
         configureChartAppearance();
         configureChartData();
+
+        observeUserData();
     }
     private void configureChartAppearance(){
         binding.lineChart.setDrawGridBackground(false); // No grid background
@@ -115,6 +124,15 @@ public class ChartFragment extends Fragment {
         binding.lineChart.getLegend().setEnabled(false);
         
         
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(valueEventListener != null){
+            FireBaseSdkService.stopObserveUserData(valueEventListener);
+        }
+        binding = null;
     }
 
     private void configureChartData(){
@@ -193,13 +211,18 @@ public class ChartFragment extends Fragment {
                 .setTitle(isBuy ? "Buy" : "Sell")
                 .setView(dialogView)
                 .setPositiveButton("Submit", (dialogInterface, which) -> {
-                    String entered = etAmount.getText().toString();
-                    int amount = 0;
-                    try { amount = Integer.parseInt(entered); } catch (Exception ignore) {}
-
-                    int newQuantity = isBuy ? currentQuantity + amount : currentQuantity - amount;
-                    binding.tvQuantity.setText( String.valueOf(newQuantity));
-                    // TODO: שמור ב־Firebase
+                    String amountStr = etAmount.getText().toString();
+                    int amount = Integer.parseInt(amountStr);
+                    Task<Void>task = isBuy ?
+                            FireBaseSdkService.buyStock(stock,amount) :
+                            FireBaseSdkService.sellStock(stock,amount);
+                    task.addOnCompleteListener(res -> {
+                       if(res.isSuccessful()) {
+                           Toast.makeText(getContext(), isBuy ? "Buy Complete":"Sell Complete",Toast.LENGTH_LONG).show();
+                           return;
+                       }
+                       Toast.makeText(getContext(),res.getException().getMessage(),Toast.LENGTH_LONG).show();
+                    });
                 })
                 .setNegativeButton("Cancel", null)
                 .create();
@@ -244,11 +267,20 @@ public class ChartFragment extends Fragment {
 
     }
 
-    private void setQuantity() {
-        // TODO: Calculate and load stocks quantity from Firebase in the future
-        if (binding != null) {
-            binding.tvQuantity.setText("5");
-        }
-    }
+    private void observeUserData(){
+        valueEventListener = FireBaseSdkService.observeUserData(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                if(user == null) return;
+                int newQuantity = user.getTotalQuantityForStock(stockSymbol);
+                binding.tvQuantity.setText(String.valueOf(newQuantity));
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getContext(),error.getMessage(),Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 }

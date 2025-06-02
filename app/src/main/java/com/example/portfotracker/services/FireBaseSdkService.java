@@ -67,6 +67,12 @@ public class FireBaseSdkService {
                 .child(userId)
                 .addValueEventListener(valueEventListener);
     }
+    public static void stopObserveUserData(ValueEventListener valueEventListener){
+        String userId = mAuth.getCurrentUser().getUid();
+        mDatabase.child(USERS_PATH_STRING)
+                .child(userId)
+                .removeEventListener(valueEventListener);
+    }
 
     public static Task<Void> buyStock(Stock stock, int quantity) {
         return processStockTransaction(stock, quantity, true);
