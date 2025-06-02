@@ -51,7 +51,7 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         binding.stocksRecycler.setItemAnimator(new DefaultItemAnimator());
         binding.stocksRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-        stockAdapter = new StockAdapter(stockArrayList, stock -> {
+        stockAdapter = new StockAdapter(getContext(),stockArrayList, stock -> {
             Bundle bundle = new Bundle();
             bundle.putString(ChartFragment.STOCK_SYMBOL, stock.getSymbol());
             NavController navController = NavHostFragment.findNavController(this);

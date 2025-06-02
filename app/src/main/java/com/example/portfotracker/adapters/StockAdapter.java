@@ -1,22 +1,27 @@
 package com.example.portfotracker.adapters;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.portfotracker.R;
 import com.example.portfotracker.databinding.ItemStockBinding;
 import com.example.portfotracker.models.Stock;
 
 import java.util.ArrayList;
 
 public class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder>{
+    private Context context;
 
     private ArrayList<Stock> stockArrayList;
     private OnItemClickListener onItemClickListener;
-    public StockAdapter(ArrayList<Stock> stockArrayList, OnItemClickListener onItemClickListener) {
+    public StockAdapter(Context context, ArrayList<Stock> stockArrayList, OnItemClickListener onItemClickListener) {
+        this.context = context;
         this.stockArrayList = stockArrayList;
         this.onItemClickListener = onItemClickListener;
     }
@@ -42,6 +47,10 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHol
         holder.binding.stockName.setText(currentStock.getName());
         holder.binding.stockPrice.setText(String.valueOf(currentStock.getCurrentPrice()));
         holder.binding.stockChange.setText(String.format("%.2f%%", currentStock.getPriceChangePercentage()));
+        int color = (currentStock.getPriceChangePercentage() > 0)
+                ? ContextCompat.getColor(context, R.color.accent_green)
+                : ContextCompat.getColor(context, R.color.accent_red);
+        holder.binding.stockChange.setTextColor(color);
         holder.binding.itemView.setOnClickListener(v->{
             if(onItemClickListener != null){
                 onItemClickListener.onItemClick(currentStock);
