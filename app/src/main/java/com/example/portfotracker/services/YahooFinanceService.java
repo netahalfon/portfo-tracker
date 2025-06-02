@@ -16,6 +16,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -23,6 +25,8 @@ import java.util.concurrent.Future;
 public class YahooFinanceService {
 
     private static final String BASE_URL = "https://query1.finance.yahoo.com/v8/finance/chart";
+
+    private static Map<String,Stock> cacheStocks = new HashMap<>();
     private static final String[] TOP_50_SP500_STOCKS = {
             // Technology
             "MSFT",  // Microsoft
@@ -103,6 +107,7 @@ public class YahooFinanceService {
         for (Future<Stock> future : futures) {
             try {
                 Stock stock = future.get();
+                cacheStocks.put(stock.getSymbol(),stock);
                 if(searchTerm != null && !searchTerm.isEmpty() && !stock.getSymbol().toLowerCase().contains(searchTerm.toLowerCase()) && !stock.getName().toLowerCase().contains(searchTerm.toLowerCase())){
                     continue;
                 }
@@ -165,5 +170,8 @@ public class YahooFinanceService {
             Log.d("Fetch Error", "Error fetching stock data for symbol: " + symbol);
         }
         return null;
+    }
+    public static Map<String,Stock> getCacheStocks(){
+        return cacheStocks;
     }
 }

@@ -20,7 +20,6 @@ import java.util.Map;
 public class FireBaseSdkService {
 
     private static final String USERS_PATH_STRING = "users";
-    private static final String TRANSACTIONS_PATH_STRING = "transactions";
     private static final String ACCOUNT_BALANCE_PATH_STRING = "accountBalance";
     private static final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private static final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
