@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary brand colors -->
+    <color name="primary">#003A64</color>
+    <color name="primary_variant">#097C71</color>
+    <color name="primary_dark">#050B2E</color>
+    <color name="primary_light">#E6F0FF</color>
+
+    <!-- Background colors -->
+    <color name="background">#FFFFFF</color>     <!-- לבן -->
+    <color name="surface">#E1F5F6</color>        <!-- תכלת בהיר מאוד (Light Cyan) -->
+    <color name="card_background">#6B95F4</color> <!-- תכלת בהיר (Pale Turquoise) -->
+
+    <!-- Text colors -->
+    <color name="text_primary">#090909</color>      <!-- טקסט כהה עיקרי -->
+    <color name="text_secondary">#313131</color>    <!-- טקסט משני -->
+    <color name="text_tertiary">#454444</color>     <!-- טקסט שלישי -->
+
+    <!-- Accent colors -->
+    <color name="accent_green">#00C087</color>
+    <color name="accent_red">#FF3B3B</color>
+
+    <!-- Status colors -->
+    <color name="success">#00C087</color>
+    <color name="error">#FF3B3B</color>
+    <color name="warning">#FFB800</color>
+    <color name="google_blue">#4285F4</color>
+    <color name="light_gray">#E0E0E0</color>
+    <color name="dark_gray">#757575</color>
+    <color name="positive_green">#4CAF50</color>
+    <color name="negative_red">#F44336</color>
+
+    <!-- Divider -->
+    <color name="divider">#1AFFFFFF</color>
+
+    <!-- System colors -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="link">#289AEF</color>
+</resources>
