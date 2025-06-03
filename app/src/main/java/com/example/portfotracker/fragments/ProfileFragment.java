@@ -55,7 +55,7 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         binding.stocksRecycler.setItemAnimator(new DefaultItemAnimator());
-        binding.stocksRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        binding.stocksRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         stockAdapter = new StockAdapter(getContext(),stockArrayList, stock -> {
             Bundle bundle = new Bundle();
             bundle.putString(ChartFragment.STOCK_SYMBOL, stock.getSymbol());
