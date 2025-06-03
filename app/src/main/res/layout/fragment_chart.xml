@@ -17,21 +17,36 @@
         app:cardCornerRadius="12dp"
         app:cardElevation="4dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView
-                android:id="@+id/companyName"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/companyName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"/>
+
+                <ImageButton
+                    android:id="@+id/btnFavorite"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/star"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/favorite"
+                    android:padding="4dp"/>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/stockSymbol"
@@ -39,9 +54,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:textColor="@color/text_secondary"
-                android:layout_marginTop="8dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/companyName" />
+                android:layout_marginTop="8dp"/>
 
             <TextView
                 android:id="@+id/currentPrice"
@@ -50,10 +63,9 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_secondary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/stockSymbol" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"/>
+        </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
     <!-- Chart Card -->
