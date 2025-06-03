@@ -22,13 +22,17 @@ import com.example.portfotracker.R;
 import com.example.portfotracker.adapters.StockAdapter;
 import com.example.portfotracker.databinding.FragmentProfileBinding;
 import com.example.portfotracker.models.Stock;
+import com.example.portfotracker.models.Transaction;
 import com.example.portfotracker.models.User;
 import com.example.portfotracker.services.FireBaseSdkService;
+import com.example.portfotracker.services.YahooFinanceService;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ProfileFragment extends Fragment {
 
@@ -56,7 +60,7 @@ public class ProfileFragment extends Fragment {
             Bundle bundle = new Bundle();
             bundle.putString(ChartFragment.STOCK_SYMBOL, stock.getSymbol());
             NavController navController = NavHostFragment.findNavController(this);
-            navController.navigate(R.id.action_homeFragment_to_chartFragment, bundle);
+            navController.navigate(R.id.action_profileFragment_to_chartFragment, bundle);
         });
         binding.stocksRecycler.setAdapter(stockAdapter);
 
@@ -107,9 +111,7 @@ public class ProfileFragment extends Fragment {
                 .setView(dialogView)
                 .setPositiveButton("Submit", (dialogInterface, which) -> {
                     String entered = etAmount.getText().toString();
-                    double amount = 0;
-                    try { amount = Double.parseDouble(entered); } catch (Exception ignore) {}
-
+                    double amount = Double.parseDouble(entered);
                     double newBalance = isDeposit ? currentBalance + amount : currentBalance - amount;
                     FireBaseSdkService.setUserAccountBalance(newBalance);
                 })
@@ -179,6 +181,24 @@ public class ProfileFragment extends Fragment {
                 if(user == null) return;
                 binding.tvBalance.setText(String.format("$%.2f", user.getAccountBalance()));
                 binding.tvUsername.setText(user.getName());
+                Map<String, List<Transaction>> transactions = user.getTransactions();
+                stockArrayList.clear();
+                double totalPaidForStocks = 0;
+                double currentStocksValue = 0;
+                for (String stockSymbol : transactions.keySet()) {
+                    if(user.getTotalQuantityForStock(stockSymbol) == 0)continue;
+                    Stock stock = YahooFinanceService.getCacheStocks().get(stockSymbol);
+                    stockArrayList.add(stock);
+                    for (Transaction transaction : transactions.get(stockSymbol)){
+                        totalPaidForStocks += transaction.getPrice() * transaction.getQuantity();
+                        currentStocksValue += stock.getCurrentPrice() * transaction.getQuantity();
+                    }
+                }
+                binding.tvTotalPaid.setText(String.format("$%.2f",totalPaidForStocks));
+                binding.tvCurrentValue.setText(String.format("$%.2f",currentStocksValue));
+                binding.tvChangeFromCost.setText(String.format("$%.2f",currentStocksValue - totalPaidForStocks));
+                binding.tvPortfolioValue.setText(String.format("$%.2f",currentStocksValue + user.getAccountBalance()));
+                stockAdapter.updateStockList(stockArrayList);
             }
 
             @Override

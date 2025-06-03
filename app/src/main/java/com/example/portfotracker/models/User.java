@@ -51,6 +51,7 @@ public class User {
     }
 
     public Map<String, List<Transaction>> getTransactions() {
+        if(transactions == null) return new HashMap<>();
         return transactions;
     }
 

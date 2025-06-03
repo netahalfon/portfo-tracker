@@ -34,6 +34,9 @@
             app:destination="@id/homeFragment" />
 
         <action
+            android:id="@+id/action_profileFragment_to_chartFragment"
+            app:destination="@id/chartFragment" />
+        <action
             android:id="@+id/action_profileFragment_to_favoriteFragment"
             app:destination="@id/favoriteFragment" />
     </fragment>
