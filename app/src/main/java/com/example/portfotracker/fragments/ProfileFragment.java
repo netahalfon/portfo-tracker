@@ -136,10 +136,8 @@ public class ProfileFragment extends Fragment {
 
                     if (newBalance<0) {
                         tvError.setText("Cannot withdraw more than your balance");
-                        tvError.setVisibility(View.VISIBLE);
                     } else if (amount == 0) {
                         tvError.setText("Add a valid amount");
-                        tvError.setVisibility(View.VISIBLE);
                     }else{
                         valid = true;
                     }
