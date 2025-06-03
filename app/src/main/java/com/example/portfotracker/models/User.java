@@ -1,5 +1,6 @@
 package com.example.portfotracker.models;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,9 @@ public class User {
 
     private Map<String, List<Transaction>> transactions;
 
+    private List<String> favorites;
+
+
     public User(){
         // Required for Firebase
     }
@@ -19,6 +23,7 @@ public class User {
         this.email = email;
         this.accountBalance = accountBalance;
         this.transactions = new HashMap<>();
+        this.favorites = new ArrayList<String>();
     }
 
     public String getName() {
@@ -63,5 +68,14 @@ public class User {
         return transactionsForStock.stream()
                 .mapToInt(Transaction::getQuantity)
                 .sum();
+    }
+
+    public List<String> getFavorites() {
+        if(favorites == null) return new ArrayList<>();
+        return favorites;
+    }
+
+    public void setFavorites(List<String> favorites) {
+        this.favorites = favorites;
     }
 }

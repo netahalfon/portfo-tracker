@@ -68,11 +68,20 @@ public class ChartFragment extends Fragment {
 
         binding.btnBuy.setOnClickListener(v -> showBuySellDialog(true));
         binding.btnSell.setOnClickListener(v -> showBuySellDialog(false));
-
+        binding.btnFavorite.setOnClickListener(v -> toggleFavorite());
         return binding.getRoot();
     }
 
-    private void initViews(){
+private void toggleFavorite() {
+    FireBaseSdkService.toggleFavorite(stock.getSymbol()).addOnCompleteListener(task -> {
+        if(!task.isSuccessful()){
+            Toast.makeText(getContext(),task.getException().getMessage(),Toast.LENGTH_LONG).show();
+            return;
+        }
+    });
+}
+
+private void initViews(){
 
         binding.companyName.setText(stock.getName());
         binding.stockSymbol.setText(stock.getSymbol());
@@ -275,6 +284,10 @@ public class ChartFragment extends Fragment {
                 if(user == null) return;
                 int newQuantity = user.getTotalQuantityForStock(stockSymbol);
                 binding.tvQuantity.setText(String.valueOf(newQuantity));
+
+                List<String> favorites = user.getFavorites();
+                boolean isFavorite = favorites != null && favorites.contains(stockSymbol);
+                updateFavoriteIcon(isFavorite);
             }
 
             @Override
@@ -283,4 +296,13 @@ public class ChartFragment extends Fragment {
             }
         });
     }
+
+    private void updateFavoriteIcon(boolean isFavorite) {
+        if (isFavorite) {
+            binding.btnFavorite.setImageResource(R.drawable.star);
+        } else {
+            binding.btnFavorite.setImageResource(R.drawable.empty_star);
+        }
+    }
+
 }

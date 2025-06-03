@@ -20,6 +20,7 @@ import java.util.Map;
 public class FireBaseSdkService {
 
     private static final String USERS_PATH_STRING = "users";
+    private static final String FAVORITES_PATH_STRING = "favorites";
     private static final String ACCOUNT_BALANCE_PATH_STRING = "accountBalance";
     private static final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private static final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -175,6 +176,46 @@ public class FireBaseSdkService {
             }
         });
 
+        return taskSource.getTask();
+    }
+
+    public static Task<Boolean> toggleFavorite(String stockSymbol) {
+        TaskCompletionSource<Boolean> taskSource = new TaskCompletionSource<>();
+        String userId = mAuth.getCurrentUser().getUid();
+        DatabaseReference userRef = mDatabase.child(USERS_PATH_STRING).child(userId);
+        userRef.get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful() || !task.getResult().exists()) {
+                taskSource.setException(task.getException() != null
+                        ? task.getException()
+                        : new Exception("Failed to fetch user data"));
+                return;
+            }
+            User user = task.getResult().getValue(User.class);
+            if (user == null) {
+                taskSource.setException(new Exception("Failed to fetch user data"));
+                return;
+            }
+
+            List<String> favorites = user.getFavorites();
+
+            if(favorites.contains(stockSymbol)){
+                favorites.remove(stockSymbol);
+            }else {
+                favorites.add(stockSymbol);
+            }
+
+            userRef.child(FAVORITES_PATH_STRING).setValue(favorites).addOnCompleteListener(setTask -> {
+                if (setTask.isSuccessful()) {
+                    // If the update to the database succeeded,
+                    // set the task result to whether the stock is currently a favorite (true = added to favorites, false = removed from favorites)
+                    taskSource.setResult(favorites.contains(stockSymbol));
+                }else{
+                    taskSource.setException(setTask.getException() != null
+                            ? setTask.getException()
+                            : new Exception("Failed to update user data"));
+                }
+            });
+        });
         return taskSource.getTask();
     }
 }
