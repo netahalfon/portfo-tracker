@@ -1,6 +1,7 @@
 package com.example.portfotracker.fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -46,6 +47,8 @@ public class ChartFragment extends Fragment {
 
     private String stockSymbol;
     private Stock stock;
+    private User user;
+
 
     public ChartFragment() {}
 
@@ -197,90 +200,112 @@ private void initViews(){
     }
 
     private void showBuySellDialog(boolean isBuy) {
-        //Create a dialog-optimized view
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View dialogView = inflater.inflate(R.layout.dialog_buy_sell, null);
 
-        //Finding components in the dialog view
+        // 1. Find dialog views
+        TextView tvBuySell = dialogView.findViewById(R.id.tv_buy_sell);
+        TextView tvStockSymbol = dialogView.findViewById(R.id.tv_stock_symbol);
+        TextView tvSharePrice = dialogView.findViewById(R.id.tv_share_price);
         TextView tvCurrentQuantity = dialogView.findViewById(R.id.tv_current_quantity);
+        TextView tvAmountLabel = dialogView.findViewById(R.id.tv_amount_label);
         EditText etAmount = dialogView.findViewById(R.id.et_amount);
         TextView tvNewQuantity = dialogView.findViewById(R.id.tv_new_quantity);
+        TextView tvStockPriceValue = dialogView.findViewById(R.id.tv_stock_price_value);
+        TextView tvCurrentBalance = dialogView.findViewById(R.id.tv_current_balance);
+        TextView tvNewBalance = dialogView.findViewById(R.id.tv_new_balance);
         TextView tvError = dialogView.findViewById(R.id.tv_error);
 
-        //View current quantity
-        String quantityStr = binding.tvQuantity.getText().toString().replace("$", "");
-        int currentQuantity = Integer.parseInt(quantityStr);
-        tvCurrentQuantity.setText("Current quantity: " + currentQuantity);
+        // 2. Get and display initial values
+        String symbol = stock.getSymbol();
+        int currentQuantity = Integer.parseInt(binding.tvQuantity.getText().toString().replace("$", ""));
+        double sharePrice = stock.getCurrentPrice();
+        double currentBalance = user.getAccountBalance();
 
+        tvBuySell.setText(isBuy ? "Buy " : "Sell ");
+        tvStockSymbol.setText(symbol);
+        tvSharePrice.setText(String.valueOf(sharePrice));
+        tvCurrentQuantity.setText(String.valueOf(currentQuantity));
+        tvAmountLabel.setText(isBuy ? "Amount to buy" : "Amount to sell");
+        tvCurrentBalance.setText(String.format("%.2f", currentBalance));
+        tvStockPriceValue.setText("0.00");
+        tvNewQuantity.setText(String.valueOf(currentQuantity));
+        tvNewBalance.setText(String.format("%.2f", currentBalance));
+        tvError.setText(" ");
 
-
-
-        //Building the dialog
+        // 3. Build and show dialog
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setTitle(isBuy ? "Buy" : "Sell")
                 .setView(dialogView)
                 .setPositiveButton("Submit", (dialogInterface, which) -> {
                     String amountStr = etAmount.getText().toString();
                     int amount = Integer.parseInt(amountStr);
-                    Task<Void>task = isBuy ?
-                            FireBaseSdkService.buyStock(stock,amount) :
-                            FireBaseSdkService.sellStock(stock,amount);
+                    Task<Void> task = isBuy
+                            ? FireBaseSdkService.buyStock(stock, amount)
+                            : FireBaseSdkService.sellStock(stock, amount);
+
                     task.addOnCompleteListener(res -> {
-                       if(res.isSuccessful()) {
-                           Toast.makeText(getContext(), isBuy ? "Buy Complete":"Sell Complete",Toast.LENGTH_LONG).show();
-                           return;
-                       }
-                       Toast.makeText(getContext(),res.getException().getMessage(),Toast.LENGTH_LONG).show();
+                        Context context = getContext();
+                        if (context == null) return;
+                        String msg = isBuy ? "Buy Complete" : "Sell Complete";
+                        if (res.isSuccessful()) {
+                            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(context, res.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
                     });
                 })
                 .setNegativeButton("Cancel", null)
                 .create();
 
-        // Showing the dialog
         dialog.show();
         final Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        positiveButton.setEnabled(false);
 
-        // Calculating and updating the future quantity while writing
+        // 4. Enable submit only when input is valid
         etAmount.addTextChangedListener(new android.text.TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                int amount = 0;
+                String amountStr = s.toString().trim();
                 boolean valid = false;
                 tvError.setText(" ");
+                int amount= amountStr.isEmpty() ? 0: Integer.parseInt(amountStr);
 
                 try {
-                    amount = Integer.parseInt(s.toString());
                     int newQuantity = isBuy ? currentQuantity + amount : currentQuantity - amount;
+                    double totalPrice = sharePrice * amount;
+                    double newBalance = isBuy ? currentBalance - totalPrice : currentBalance + totalPrice;
 
-                    if (newQuantity<0) {
-                        tvError.setText("Cannot sell more than your quantity");
-                        tvError.setVisibility(View.VISIBLE);
-                    } else if (amount == 0) {
+                    if (amountStr.isEmpty()) {
+                        tvError.setText("");
+                    }
+                    else if (amount == 0 && !amountStr.isEmpty()) {
                         tvError.setText("Add a valid amount");
-                        tvError.setVisibility(View.VISIBLE);
-                    }else{
+                    } else if ( newQuantity < 0) {
+                        tvError.setText("Cannot sell more than your quantity");
+                    } else if ( newBalance < 0) {
+                        tvError.setText("Not enough in balance");
+                    } else {
                         valid = true;
                     }
-                    tvNewQuantity.setText("New quantity: " + newQuantity);
-                } catch (Exception ignore) {}
-                if (positiveButton != null) {
+
+                    tvNewQuantity.setText(String.valueOf(newQuantity));
+                    tvStockPriceValue.setText(String.format("%.2f", totalPrice));
+                    tvNewBalance.setText(String.format("%.2f", newBalance));
                     positiveButton.setEnabled(valid);
-                }
+
+                } catch (Exception ignore) {
+                    positiveButton.setEnabled(valid);                }
             }
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void afterTextChanged(android.text.Editable s) {}
         });
-
-
-        positiveButton.setEnabled(false); // כפתור Submit מושבת בהתחלה
-
     }
 
     private void observeUserData(){
         valueEventListener = FireBaseSdkService.observeUserData(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User user = snapshot.getValue(User.class);
+                user = snapshot.getValue(User.class);
                 if(user == null) return;
                 int newQuantity = user.getTotalQuantityForStock(stockSymbol);
                 binding.tvQuantity.setText(String.valueOf(newQuantity));

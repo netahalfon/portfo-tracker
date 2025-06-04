@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.ProfileFragment">
-
-    <!--  Portfolio Value -->
     <LinearLayout
-        android:paddingHorizontal="24dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
+        >
 
+        <!--  Portfolio Value -->
         <TextView
-            style="@style/TextAppearance.App.H2"
+            style="@style/TextAppearance.App.H3"
+            android:drawableStart="@drawable/portfolio_icon"
             android:text="Portfolio Value:"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_marginTop="16dp"
+            />
 
         <TextView
-            style="@style/TextAppearance.App.H2"
+            style="@style/TextAppearance.App.H1"
             android:id="@+id/tv_portfolio_value"
             android:text="00.00$"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-    </LinearLayout>
+            android:layout_marginBottom="16dp"
+        />
 
     <!-- Username -->
     <LinearLayout
@@ -71,7 +71,7 @@
             android:layout_weight="1"/>
 
         <TextView
-            style="@style/TextAppearance.App.H2"
+            style="@style/TextAppearance.App.H3"
             android:id="@+id/tv_balance"
             android:text="$0.00"
             android:layout_width="0dp"
@@ -103,11 +103,20 @@
             android:text="Withdraw"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:layout_marginStart="12dp" />
+
 
     </LinearLayout>
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#e0e0e0"
+            android:layout_marginBottom="16dp"/>
 
-    <!-- Total paid for stocks -->
+
+        <!-- Total paid for stocks -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -137,7 +146,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingHorizontal="24dp"
-        android:layout_marginBottom="24dp">
+        android:layout_marginBottom="16dp">
 
         <TextView
             style="@style/TextAppearance.App.Body1"
@@ -161,7 +170,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingHorizontal="24dp"
-        android:layout_marginBottom="24dp">
+        android:layout_marginBottom="16dp">
 
         <TextView
             style="@style/TextAppearance.App.Body1"
@@ -178,21 +187,30 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
     </LinearLayout>
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#e0e0e0"
+            android:layout_marginBottom="16dp"/>
 
     <TextView
-        style="@style/TextAppearance.App.Body1"
+        style="@style/TextAppearance.App.H3"
         android:paddingHorizontal="24dp"
         android:text="Personal investment portfolio:"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/stocks_recycler"
+        android:paddingHorizontal="14dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:clipToPadding="false"
         android:visibility="visible"
+        android:nestedScrollingEnabled="false"
         tools:layout_editor_absoluteX="0dp" />
 
-
-</LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

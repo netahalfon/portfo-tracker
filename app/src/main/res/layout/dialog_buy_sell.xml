@@ -5,12 +5,84 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tv_current_quantity"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Current quantity: 0"
-        android:layout_marginBottom="12dp"/>
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp"
+        >
+
+        <TextView
+            android:id="@+id/tv_buy_sell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TextAppearance.App.H2"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/tv_stock_symbol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AAPL"
+            style="@style/TextAppearance.App.H2"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="30dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="price per share: $" />
+
+        <TextView
+            android:id="@+id/tv_share_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="500" />
+    </LinearLayout>
+
+    <!-- Current quantity row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Current quantity" />
+
+        <TextView
+            android:id="@+id/tv_current_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" shares"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <!-- Amount to buy -->
+    <TextView
+        android:id="@+id/tv_amount_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Amount to buy"
+        android:layout_marginBottom="8dp"/>
 
     <EditText
         android:id="@+id/et_amount"
@@ -19,13 +91,132 @@
         android:hint="Enter amount"
         android:inputType="number"
         android:layout_marginBottom="12dp"/>
-
-    <TextView
-        android:id="@+id/tv_new_quantity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New quantity: 0"
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#e0e0e0"
         android:layout_marginBottom="16dp"/>
+
+    <!-- New quantity row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="New quantity" />
+
+        <TextView
+            android:id="@+id/tv_new_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" shares"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Total price row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Total price" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$"
+            android:textStyle="bold"
+            android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/tv_stock_price_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.00"
+            android:textStyle="bold"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#e0e0e0"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Current balance row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Current balance" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/tv_current_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.00"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- New balance row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="New balance" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/tv_new_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.00"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+
 
     <TextView
         android:id="@+id/tv_error"
