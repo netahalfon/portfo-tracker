@@ -13,6 +13,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.portfotracker.R;
 import com.example.portfotracker.databinding.ActivityHomeBinding; // זהו ה־import של הביינדינג
+import com.example.portfotracker.services.FireBaseSdkService;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -32,6 +33,13 @@ public class HomeActivity extends AppCompatActivity {
             return insets;
         });
 
+
+        FireBaseSdkService.getUserName().addOnSuccessListener(name -> {
+            if(name != null){
+                binding.avatarText.setText(name.toUpperCase().charAt(0) + "");
+            }
+        });
+
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(binding.navHostFragment.getId());
         if (navHostFragment != null) {
@@ -42,5 +50,10 @@ public class HomeActivity extends AppCompatActivity {
                 return NavigationUI.onNavDestinationSelected(item, navController);
             });
         }
+
+        binding.logOutBtn.setOnClickListener((v)->{
+            FireBaseSdkService.signOut();
+            finish();
+        });
     }
 }

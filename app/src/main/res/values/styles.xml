@@ -70,7 +70,7 @@
     <!-- Input Field Styles -->
     <style name="Widget.App.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxStrokeColor">@color/primary</item>
-        <item name="boxBackgroundColor">@color/surface</item>
+        <item name="boxBackgroundColor">@color/card_background</item>
         <item name="android:textColorHint">@color/text_tertiary</item>
         <item name="hintTextColor">@color/primary</item>
         <item name="endIconTint">@color/text_secondary</item>
