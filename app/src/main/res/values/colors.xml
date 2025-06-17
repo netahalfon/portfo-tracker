@@ -7,9 +7,9 @@
     <color name="primary_light">#E6F0FF</color>
 
     <!-- Background colors -->
-    <color name="background">#FFFFFF</color>     <!-- לבן -->
+    <color name="background">#f3f8fe</color>     <!-- לבן -->
     <color name="surface">#E1F5F6</color>        <!-- תכלת בהיר מאוד (Light Cyan) -->
-    <color name="card_background">#C3D3F8</color> <!-- תכלת בהיר (Pale Turquoise) -->
+    <color name="card_background">#f3f8fe</color> <!-- תכלת בהיר (Pale Turquoise) -->
 
     <!-- Text colors -->
     <color name="text_primary">#090909</color>      <!-- טקסט כהה עיקרי -->

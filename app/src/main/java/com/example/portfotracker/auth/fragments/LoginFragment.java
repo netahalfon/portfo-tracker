@@ -67,6 +67,11 @@ public class LoginFragment extends Fragment {
                     Toast.makeText(getContext(), "Login Successful", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(requireActivity(), HomeActivity.class);
                     startActivity(intent);
+
+                    // reset login text
+                    binding.emailInput.setText("");
+                    binding.passwordInput.setText("");
+                    binding.emailInput.requestFocus();
                 }else {
                     Toast.makeText(getContext(), "Login Failed", Toast.LENGTH_SHORT).show();
                 }

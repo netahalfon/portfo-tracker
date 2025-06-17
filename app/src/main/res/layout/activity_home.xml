@@ -6,15 +6,54 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <ImageView
+<!--    <ImageView-->
+<!--        android:id="@+id/logo_image"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="60dp"-->
+<!--        android:src="@drawable/ic_banner"-->
+<!--        android:contentDescription="app logo"-->
+<!--        android:scaleType="fitCenter"-->
+<!--        app:layout_constraintTop_toTopOf="parent"/>-->
+
+    <LinearLayout
         android:id="@+id/logo_image"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:src="@drawable/ic_banner"
-        android:contentDescription="app logo"
-        android:scaleType="fitCenter"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+    android:orientation="horizontal">
 
+        <ImageView
+            android:layout_height="60dp"
+            android:layout_width="60dp"
+            android:src="@drawable/portfo_tracker"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="#454BE4"
+            android:layout_gravity="center"
+            style="@style/TextAppearance.App.H2"
+            android:text="PortfoTracker"/>
+
+        <TextView
+            android:id="@+id/avatarText"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="K"
+            android:textSize="20sp"
+            android:textColor="#646BE9"
+            android:background="@drawable/circle_background"
+            android:layout_margin="8dp" />
+        <ImageButton
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@color/background"
+            android:id="@+id/log_out_btn"
+            android:src="@drawable/log_out"
+            />
+
+    </LinearLayout>
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"

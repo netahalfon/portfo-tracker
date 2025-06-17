@@ -44,7 +44,6 @@ public class FireBaseSdkService {
 
         return taskSource.getTask();
     }
-
     public static Task<AuthResult> login(String email, String password){
 
         TaskCompletionSource<AuthResult> taskSource = new TaskCompletionSource<>();
@@ -61,10 +60,29 @@ public class FireBaseSdkService {
         return taskSource.getTask();
     }
 
+    public static Task<String> getUserName(){
+        TaskCompletionSource<String> taskSource = new TaskCompletionSource<>();
+
+        String userId = mAuth.getCurrentUser().getUid();
+        DatabaseReference userRef = mDatabase.child(USERS_PATH_STRING).child(userId).child("name");
+        userRef.get().addOnCompleteListener(task -> {
+        if (task.isSuccessful() && task.getResult().exists()) {
+            String name = task.getResult().getValue(String.class);
+            taskSource.setResult(name);
+        }else{
+            taskSource.setException(task.getException() != null
+                    ? task.getException()
+                    : new Exception("Failed to update user data"));
+        }
+        });
+        return taskSource.getTask();
+    }
+
     public static ValueEventListener observeUserData(ValueEventListener valueEventListener){
         String userId = mAuth.getCurrentUser().getUid();
         return mDatabase.child(USERS_PATH_STRING)
                 .child(userId)
+                .child("name")
                 .addValueEventListener(valueEventListener);
     }
     public static void stopObserveUserData(ValueEventListener valueEventListener){
@@ -217,5 +235,9 @@ public class FireBaseSdkService {
             });
         });
         return taskSource.getTask();
+    }
+
+    public static void signOut() {
+        mAuth.signOut();
     }
 }
