@@ -51,9 +51,17 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
 
-        binding.logOutBtn.setOnClickListener((v)->{
-            FireBaseSdkService.signOut();
-            finish();
+        binding.logOutBtn.setOnClickListener(v -> {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Log Out")
+                    .setMessage("Are you sure you want to log out?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        FireBaseSdkService.signOut();
+                        finish();
+                    })
+                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                    .show();
         });
+
     }
 }
