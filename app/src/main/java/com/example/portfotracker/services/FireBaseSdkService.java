@@ -82,7 +82,6 @@ public class FireBaseSdkService {
         String userId = mAuth.getCurrentUser().getUid();
         return mDatabase.child(USERS_PATH_STRING)
                 .child(userId)
-                .child("name")
                 .addValueEventListener(valueEventListener);
     }
     public static void stopObserveUserData(ValueEventListener valueEventListener){
