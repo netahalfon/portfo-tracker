@@ -13,9 +13,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center"
         android:padding="16dp"
         >
-
+        <TextView
+            android:id="@+id/stock_first_letter"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="K"
+            android:textSize="20sp"
+            android:textColor="#FDFDFD"
+            android:textStyle="bold"
+            android:background="@drawable/bg_circle_gradient"
+            android:layout_margin="8dp" />
         <!-- Stock Info -->
         <LinearLayout
             android:layout_width="0dp"
@@ -30,6 +41,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:textStyle="bold"
+                android:layout_marginBottom="5dp"
                 android:text="AAPL"/>
 
             <TextView
@@ -47,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="end"
+            android:gravity="center"
             android:layout_marginStart="16dp">
 
             <TextView
@@ -56,15 +68,18 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:textStyle="bold"
+                android:layout_marginBottom="5dp"
                 android:text="$182.52"/>
 
             <TextView
                 android:id="@+id/stock_change"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-                android:textColor="@color/success"
-                android:text="+1.24%"/>
+                android:background="@drawable/bg_stock_change_positive"
+                android:drawableStart="@drawable/ic_arrow_up"
+                android:text="0.00%"
+                android:textSize="13sp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
 
         </LinearLayout>
 

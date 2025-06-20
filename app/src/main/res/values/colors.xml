@@ -17,8 +17,10 @@
     <color name="text_tertiary">#454444</color>     <!-- טקסט שלישי -->
 
     <!-- Accent colors -->
-    <color name="accent_green">#00C087</color>
-    <color name="accent_red">#FF3B3B</color>
+    <color name="accent_green">#157F3D</color>
+    <color name="accent_red">#B81C1C</color>
+    <color name="accent_bg_green">#DAFAE5</color>
+    <color name="accent_bg_red">#FCE0E0</color>
 
     <!-- Status colors -->
     <color name="success">#00C087</color>

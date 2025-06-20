@@ -44,13 +44,22 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHol
     public void onBindViewHolder(@NonNull StockViewHolder holder, int position) {
         Stock currentStock = stockArrayList.get(position);
         holder.binding.stockSymbol.setText(currentStock.getSymbol());
+        holder.binding.stockFirstLetter.setText(String.valueOf(currentStock.getSymbol().charAt(0)));
         holder.binding.stockName.setText(currentStock.getName());
         holder.binding.stockPrice.setText(String.valueOf(currentStock.getCurrentPrice()));
         holder.binding.stockChange.setText(String.format("%.2f%%", currentStock.getPriceChangePercentage()));
-        int color = (currentStock.getPriceChangePercentage() > 0)
-                ? ContextCompat.getColor(context, R.color.accent_green)
-                : ContextCompat.getColor(context, R.color.accent_red);
-        holder.binding.stockChange.setTextColor(color);
+
+        // check if the current change is positive
+        boolean isPositive = currentStock.getPriceChangePercentage() > 0;
+        int textColor = ContextCompat.getColor(context, isPositive ? R.color.accent_green : R.color.accent_red);
+        holder.binding.stockChange.setTextColor(textColor);
+        holder.binding.stockChange.setBackgroundResource(isPositive
+                ? R.drawable.bg_stock_change_positive
+                : R.drawable.bg_stock_change_negative);
+
+
+        int arrowIcon = isPositive ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down;
+        holder.binding.stockChange.setCompoundDrawablesWithIntrinsicBounds(arrowIcon, 0, 0, 0);
         holder.binding.itemView.setOnClickListener(v->{
             if(onItemClickListener != null){
                 onItemClickListener.onItemClick(currentStock);
